@@ -1,0 +1,7 @@
+internal/generated/*.go
+bin/
+.cache/
+.env
+.idea/
+.vscode/
+*.exe

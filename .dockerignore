@@ -1,0 +1,7 @@
+.git
+.idea
+.vscode
+.cache
+bin
+internal/generated/*.go
+.env

@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: marketplace
+      POSTGRES_USER: marketplace
+      POSTGRES_PASSWORD: marketplace
+    ports:
+      - "5432:5432"
+    volumes:
+      - go_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marketplace -d marketplace"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: postgres://marketplace:marketplace@db:5432/marketplace?sslmode=disable
+      JWT_SECRET: ${JWT_SECRET:?Run scripts/setup-local.ps1 first}
+      ACCESS_TOKEN_MINUTES: ${ACCESS_TOKEN_MINUTES:-20}
+      REFRESH_TOKEN_DAYS: ${REFRESH_TOKEN_DAYS:-14}
+      ORDER_OPERATION_INTERVAL_MINUTES: ${ORDER_OPERATION_INTERVAL_MINUTES:-1}
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  go_postgres_data:
